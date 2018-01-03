@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>RF Recorder</title>
+
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></link>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<!--<link rel="stylesheet" href="/media/sf_share/webrc/bootstrap-4.0.0-beta.3/css/bootstrap.min.css"></link>
+		<script src="/media/sf_share/webrc/jquery-3.2.1/jquery.min.js"></script>
+		<script src="/media/sf_share/webrcbootstrap-4.0.0-beta.3/css/bootstrap.min.js"></script>-->
+
+		<script src="/static/mycode.js"></script>
+	</head>
+	<body>
+		<div class="container">
+			<h2><u><strong>RF Recorder</strong></u></h2>
+
+			<ul class="nav nav-tabs">
+				<li class="active">
+					<a data-toggle="tab" href="#Record">Record</a>
+				</li>
+				<li>
+					<a data-toggle="tab" href="#Play">Play</a>
+				</li>
+			</ul>
+
+			<div class="tab-content">
+
+				<div id="Record" class="tab-pane fade in active">
+					<form id="form-recorder">
+						<div class="panel-group">
+							<div class="panel panel-default">
+								<div class="panel-heading" style="font-weight:bold;font-size:16pt;text-decoration: underline;">Frequency</div>
+								<div class="panel-body">
+									<ul class="nav nav-pills">
+										<li class="active">
+											<a data-toggle="pill" href="#center" onclick="select_center();">Center</a>
+										</li>
+										<li>
+											<a data-toggle="pill" href="#high_low" onclick="select_high_low();">High/Low</a>
+										</li>
+									</ul>
+
+									<div class="tab-content">
+										<div id="center" class="tab-pane fade in active">
+											<div class="form-group">
+												<label for="center_freq" class="col-sm-2 control-label">Frequency [MHz]</label>
+												<div class="col-sm-10">
+													<input type="number" min="950" max="2149" class="form-control" id="center_freq" name="center_freq" placeholder="950-2149" style="width:10em" required/>
+												</div>
+											</div>
+
+											<div class="form-group">
+												<label for="bandwidth" class="col-sm-2 control-label">Bandwidth [MHz]</label>
+												<div class="col-sm-10">
+													<input type="number" min="1" max="80" class="form-control" id="bandwidth" name="rec_bandwidth" placeholder="1-80" style="width:10em" required/>
+												</div>
+											</div>
+										</div> <!-- center -->
+										<div id="high_low" class="tab-pane fade">
+											<div class="form-group">
+												<label for="low_freq" class="col-sm-2 control-label">Low Frequency [MHz]</label>
+												<div class="col-sm-10">
+													<input type="number" min="950" max="2149" class="form-control" id="low_freq" name="low_freq" placeholder="950-2149" style="width:10em"/>
+												</div>
+											</div>
+											<div class="form-group">
+												<label for="high_freq" class="col-sm-2 control-label">High Frequncy [MHz]</label>
+												<div class="col-sm-10">
+													<input type="number" min="951" max="2150"  class="form-control" id="high_freq" name="high_freq" placeholder="951-2150" style="width:10em"/>
+												</div>
+											</div>
+										</div> <!-- high_low-->
+									</div> <!-- tab-content-->
+								</div> <!-- panel-body -->
+							</div> <!-- panel-default -->
+
+							<div class="panel panel-default">
+								<div class="panel-heading" style="font-weight:bold;font-size:16pt;text-decoration: underline;">AGC</div>
+								<div class="panel-body">
+									<ul class="nav nav-pills">
+										<li class="active">
+											<a data-toggle="pill" href="#automac_agc" onclick="select_agc();">Automatic</a>
+										</li>
+										<li>
+											<a data-toggle="pill" href="#manual_agc" onclick="select_agc();">Manual</a>
+										</li>
+									</ul>
+
+									<div class="tab-content">
+										<div id="automac_agc" class="tab-pane fade in active"></div>
+										<div id="manual_agc" class="tab-pane fade">
+											<div class="form-group">
+												<label for="agc" class="col-sm-2 control-label">AGC [db]</label>
+												<div class="col-sm-10">
+													<input type="number" min="0" max="30.5" class="form-control" id="agc" name="agc" placeholder="0-30.5" style="width:10em"/>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div> <!-- panel-default -->
+							<div class="panel panel-default">
+								<div class="panel-heading" style="font-weight:bold;font-size:16pt;text-decoration: underline;">Record Limit</div>
+								<div class="panel-body">
+									<label><input type="radio" name="samples_type" value="time">Time [mSec]</input></label><br/>
+									<label><input type="radio" name="samples_type" value="samples" checked>Samples [MS]</input></label><br/>
+									<label><input type="radio" name="samples_type" value="size">File Size[GB]</input></label><br/>
+									<label for="samples" class="control-label col-sm-2">Samples</label>
+									<input type="number" class="form-control col-sm-10" id="samples" name="samples"  style="width:10em" required/>
+								</div>
+							</div>
+						</div> <!-- panel-group -->
+						<button id="record_btn" onclick="submit1('record');" class="btn btn-danger">Record</button>
+						<button id="spectrum_btn" onclick="submit1('spectrum');" class="btn btn-info">Spectrum</button>
+					</form>
+				</div> <!-- tab pan Record -->
+
+				<div id="Play" class="tab-pane fade">
+					<form id="form-play">
+						<div class="panel-group">
+							<div class="panel panel-default">
+								<div class="panel-heading" style="font-weight:bold;font-size:16pt;text-decoration: underline;">Frequency</div>
+								<div class="panel-body">
+									<ul class="nav nav-pills">
+										<li class="active">
+											<a data-toggle="pill" href="#play_center" onclick="play_select_center();">Center</a>
+										</li>
+										<li>
+											<a data-toggle="pill" href="#play_high_low" onclick="play_select_high_low();">High/Low</a>
+										</li>
+									</ul>
+
+									<div class="tab-content">
+										<div id="play_center" class="tab-pane fade in active">
+											<div class="form-group">
+												<label for="center_freq" class="col-sm-2 control-label">Frequency [MHz]</label>
+												<div class="col-sm-10">
+													<input type="number" min="950" max="2149" class="form-control" id="play_center_freq" name="center_freq" placeholder="950-2149" style="width:10em" required/>
+												</div>
+											</div>
+
+											<div class="form-group">
+												<label for="bandwidth" class="col-sm-2 control-label">Bandwidth [MHz]</label>
+												<div class="col-sm-10">
+													<input type="number" min="1" max="80" class="form-control" id="play_bandwidth" name="rec_bandwidth" placeholder="1-80" style="width:10em" required/>
+												</div>
+											</div>
+										</div> <!-- play_center -->
+										<div id="play_high_low" class="tab-pane fade">
+											<div class="form-group">
+												<label for="low_freq" class="col-sm-2 control-label">Low Frequency [MHz]</label>
+												<div class="col-sm-10">
+													<input type="number" min="950" max="2149" class="form-control" id="play_low_freq" name="low_freq" placeholder="950-2149" style="width:10em"/>
+												</div>
+											</div>
+											<div class="form-group">
+												<label for="high_freq" class="col-sm-2 control-label">High Frequncy [MHz]</label>
+												<div class="col-sm-10">
+													<input type="number" min="951" max="2150"  class="form-control" id="play_high_freq" name="high_freq" placeholder="951-2150" style="width:10em"/>
+												</div>
+											</div>
+										</div> <!-- play_high_low-->
+									</div> <!-- tab-content-->
+								</div> <!-- panel-body -->
+							</div> <!-- panel-default -->
+							<div class="panel panel-default">
+								<div class="panel-heading" style="font-weight:bold;font-size:16pt;text-decoration: underline;">AGC</div>
+								<div class="panel-body">
+									<label for="transmit_agc" class="col-sm-2 control-label" >AGC [db]</label>
+									<div class="col-sm-10">
+										<input type="number" min="0" max="30.5" class="form-control" id="play_agc" name="agc" placeholder="0-30.5" style="width:10em" required/>
+									</div>
+								</div>
+							</div> <!-- panel-default -->
+							<div class="panel panel-default">
+								<div class="panel-heading" style="font-weight:bold;font-size:16pt;text-decoration: underline;">File To Play</div>
+								<div class="panel-body">
+									<div class="panel-body">
+										<select id="files" name="Filename" size="10"></select>
+									</div> 
+								</div>
+							</div> <!-- panel-default -->
+						</div><!-- panel-group-->
+
+						<button type="submit" onclick="submit2();" class="btn btn-success">Play</button>
+					</form> <!-- form Play-->
+				</div> <!-- tab pan fade Play -->
+			</div>
+			<span style="position: absolute; bottom: 0; font-size=24pt" id="statusbar">xxxxxxxxxxxxxxxxxxxx</span>
+		</div> <!-- container -->
+	</body>
+</html>
