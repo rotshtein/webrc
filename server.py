@@ -13,12 +13,13 @@ app = Flask(__name__)
 #sio = SocketIO(app)
 
 pid = None
-PIPE_PATH = 'test-gui-pipe'
-DATA_FILE='/usr/bin/*.*'
-DATA_PATH='/home/x300'
-PLAY='/Spectrum --mode transmit '
-RECORD='/Spectrum'
-SPECTRUM='/Spectrum'
+PIPE_PATH = '/home/x300/eclipse-workspace/Spectrum/Release/Statuses.txt'
+DATA_FILE='/home/x300/eclipse-workspace/Spectrum/Release/*.dat'
+DATA_PATH='/home/x300/eclipse-workspace/Spectrum/Release'
+PLAY='/home/x300/eclipse-workspace/Spectrum/Release/Spectrum --mode play'
+RECORD='/home/x300/eclipse-workspace/Spectrum/Release/Spectrum --mode record'
+SPECTRUM='/home/x300/eclipse-workspace/Spectrum/Release/Spectrum --mode spec'
+RATE = str(100e6)
 
 def json_input(f):
     @wraps(f)
@@ -56,7 +57,11 @@ def work():
         
         F0,Q = getFo_and_Q(params)
         if params['play'] == True:
-            cmd = '%s --file %s --agc %s --bandwidth %s --center %s' % (PLAY, params['Filename'], params['agc'], Q, F0)
+            #"--mode play --freq " + f0.ToString() + " --rate " + Rate.ToString() + " --gain " + Gain.ToString() + " --file " + CurrFile + LoopMode;
+            cmd = '%s --freq %s --rate %s --gain %s --file %s' % (PLAY, F0, RATE, params['agc'], params['Filename'])
+            if 'loop' in params:
+                if params['loop'] == 'on':
+                    cmd = '%s --loop' % cmd
         else:
             if params['agc_auto'] == True:
                 params['agc'] = '-1';
@@ -64,10 +69,11 @@ def work():
             if params['mode'] == 'record':
                 timeString =  datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
                 recordfile = '%s/%s-%s-%s-%s.dat' % (DATA_PATH,timeString,F0,Q, params['agc'])
-                cmd = '%s --file %s --agc %s --bandwidth %s --center %s' % (RECORD, recordfile, params['agc'], Q,F0)
+                # "--mode record --freq " + f0.ToString() + " --rate " + Rate.ToString() + " --gain " + Gain.ToString() + " --file " + CurrFile + " --nsamps " + NumSamples.ToString();
+                cmd = '%s --ferq %s --rate %s --gain %s --file %s --samps %s' % (RECORD, F0, RATE, params['agc'],recordfile, str(1000000))
             else:
                 recordfile = '%s/%s.dat'%  (DATA_PATH,'spectrum.dat')
-                cmd = '%s --file %s --bandwidth %s --center %s' % (SPECTRUM, recordfile, Q, F0)
+                cmd = '%s --rate %s --file %s' % (SPECTRUM, RATE, recordfile)
         # p = subprocess.Popen('ping %s > %s' % (g.json['host'], PIPE_PATH), shell=True)
         # pid = p.pid
         pid = 0
